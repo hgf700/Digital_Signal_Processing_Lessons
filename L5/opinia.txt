@@ -1,0 +1,15 @@
+np.random.normal(oc=, scale=, size=)
+#random liczby z rozkladu normalnego/gaussa
+#   loc - srednie liczby rozkladu / centrum rozkladu
+#   scale - standardowe odchylenie jak bardzo wartości „rozchodzą się” od loc
+#   size - ile wygenerowac
+
+np.correlate(x,x,mode="")
+# 2 inputy x
+# mode:
+#   full - Zwraca wszystkie możliwe przesunięcia, nawet te, gdzie filtr tylko częściowo zahacza o sygnał.(Domyślnie)
+#   valid - Zwraca tylko te miejsca, gdzie filtr w całości mieści się w sygnale tylko pewne (bez zer)
+#   same - Wynik ma dokładnie tyle punktów co sygnał wejściowy (in1)
+
+scipy.signal.welch()
+# welch dzieli sygnał na segmenty liczy FFT dla każdego uśrednia wynik
