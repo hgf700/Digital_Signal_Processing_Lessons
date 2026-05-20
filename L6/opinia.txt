@@ -1,0 +1,4 @@
+lfilter()
+# 
+
+zrobie potem
