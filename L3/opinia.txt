@@ -1,0 +1,8 @@
+# Filter coefficients/współczynniki filtru (jak bardzo każda próbka sygnału wpływa na wynik.)
+
+np.convolve(in1,in2,mode="") #scipy
+#zwija macierze sposobem:
+#   full - Zwraca wszystkie możliwe przesunięcia, nawet te, gdzie filtr tylko częściowo zahacza o sygnał.(Domyślnie)
+#   valid - Zwraca tylko te miejsca, gdzie filtr w całości mieści się w sygnale tylko pewne (bez zer)
+#   same - Wynik ma dokładnie tyle punktów co sygnał wejściowy (in1)
+
