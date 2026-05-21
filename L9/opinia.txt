@@ -1,4 +1,11 @@
+#to ˙x pochodną po czasie: („jak zmienia się stan x w czasie”)   
 
+x_true = x_true + dt * A * x_true + w
+#˙x = −x + w (dynamika stanu - jak zmienia się prawdziwy sygnał w czasie) 
+#−x → naturalne „wygaszanie” sygnału
+#w → losowe pobudzenie (szum procesu)
 
+y = C * x_true + v
+# y=x+v  Drugie równanie: pomiar czujnik widzi prawdę + zakłócenie
 
 zrobie potem
