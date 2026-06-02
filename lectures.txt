@@ -1,0 +1,403 @@
+    #wyklad 1        Spectral Analysis of Deterministic Signals
+
+#The Fourier Transform (FT) is a fundamental tool in signal processing, physics, and engineering.
+#FT Instead of mixing signals first and then transforming, we can transform first and then multiply.
+
+#   Frequencies / Częstotliwości
+#describe how often something repeats over time. 
+
+#   Magnitude  / „moduł” , „wartość bezwzględna”
+#how big or strong something is (without caring about direction or sign).
+
+#The original signal shows how something changes over time (e.g., sound amplitude over time or space).
+#The FFT transforms it to show what frequencies are present in that signal and how strong each frequency is.
+
+#The Fourier Transform is linear. If x1(t) and x2(t) are two signals, and a1 and a2 are constants
+#If a signal x(t) is shifted in time by t0, the Fourier Transform is modified by a phase shift
+
+#   Superposition 
+#If you have several signals added together, you can treat each one separately, then add the results.
+
+#   multiply
+#For every frequency: you multiply the value from one signal by the value from the other signal 
+#taking two signals (or numbers) and combining them by normal multiplication. ex:
+#X(f)=2 H(f)=3 Then multiplication gives: Y(f)=2×3=6
+
+#Differentiating a signal in the time domain corresponds to multiplying its Fourier Transform by in the frequency domain:
+
+#   Discrete Fourier Transform (DFT)
+#is a way to take a signal made of separate samples and figure out what frequencies are inside it.
+#It converts a signal from: time view (samples over time) to frequency view (what tones/speeds are inside it)
+#usage Signal Processing, Image Processing, Physics, Communications
+
+#   Spectral leakage (in DFT)
+#A single frequency “spreads out” into many frequencies in the result. ex:
+#one tone:  100 Hz (pure sound) But DFT shows: 95 Hz, 100 Hz, 105 Hz… (spread out)
+#Why it happens: DFT assumes your signal: repeats perfectly in a loop
+
+#   DTFT (Discrete-Time Fourier Transform) 
+#is a way to see the frequencies in a digital signal (a sequence of samples).
+#You have a signal made of numbers (like samples over time). DTFT tells you: “What frequencies are inside this signal?”
+#DTFT: frequency output is continuous (smooth line) DFT: frequency output is discrete (separate points)
+
+#   DTFT of a Discrete Exponential
+#DTFT converts this growing/decaying sequence into its frequency representation.
+#A discrete exponential is made of all frequencies mixed together DTFT shows how much of each frequency exists
+#The result depends on a: if ∣a∣<1: signal decays → stable spectrum if ∣a∣>1: signal grows → spectrum is not stable
+
+#   DTFT of a Truncated Discrete Signal
+#A truncated discrete signal means: you take a signal and “cut it” to a finite length
+#Example: Original signal: infinite sequence, Truncated signal: only first N samples
+#When you truncate a signal, you are basically multiplying it by a window (like a box): original signal × window → truncated signal
+#This “cutting” causes: spectral leakage because sharp cutting in time creates extra frequencies in frequency domain.
+
+#   windowing:
+#function that “cuts” or “selects” a part of a signal. 
+#Instead of using an infinite signal, you: take only a section of it and multiply it by a window
+#What it does: keeps the middle part of the signal reduces or removes the edges
+#Why it’s used: Because cutting a signal suddenly causes distortion (spectral leakage). Windowing makes the cut smoother.
+
+#Resolution - How well a method can separate two frequencies that are very close to each other.
+
+#   window length
+#it determines the balance between frequency and time resolution
+#The window length in spectral analysis controls: how much time you look at at once
+#Long window: better frequency resolution (more precise frequencies), worse time resolution (you don’t see quick changes)
+#Short window: better time resolution (see changes quickly), worse frequency resolution (less precise frequencies)
+
+#   window types
+#When you cut a signal, you can: cut it hard (simple window) or cut it smoothly (better window)
+#Rectangular window (hard cut) sharp time cut strong spectral leakage
+#Smooth windows (Hann, Hamming, etc.) less leakage slightly blur frequency details
+
+#main lobe  Wider  (bad thing) frequency peaks become less sharp close frequencies are harder to separate
+
+#side lobe level - they create: fake small peaks, hidden weak signals, noise in spectrum (smaller better)
+#lower side lobe level has a wider main lobe as consequence.
+#rectangular -13 dB, triangular  -25 dB, Hann  -31 dB, Hamming  -41 dB, Blackman -57 dB
+#sampling errors  (smaller better)
+#rectangular 3.92 dB, triangular  1.82 dB, Hann  1.42 dB, Hamming 1.78 dB, Blackman 1.10 dB 
+
+#   Signal mixtures
+#a signal made by combining two or more signals together.
+
+#   STFT (Short-Time Fourier Transform) 
+#is a way to see how frequencies change over time. Instead of analyzing a whole signal at once, STFT:
+#cuts the signal into small time pieces and applies FFT to each piece
+#Why need it: Normal Fourier Transform tells: what frequencies exist BUT not when they happen
+
+#    spectrogram 
+#is often used to analyze signals changing in time
+
+    #wyklad 2        Digital Filters: Introduction and their role in signal processing. Characteristics of digital
+                    filters: FIR (Finite Impulse Response) vs. IIR (Infinite Impulse Response). Design and implementation
+                    of digital filters: FIR and IIR design methods. Adaptive filtering: application in adaptive
+                    signals and noise reduction.
+
+#A recursive system - The output depends on past outputs as well as inputs. (IIR filters)
+#Recurrent - repeats or happens again and again.  (IIR filters)
+
+#   Digital filters 
+#modifies a digital signal to remove unwanted parts or enhance useful parts.
+#A filter changes a signal (removes noise, selects frequencies...), window is mainly used to prepare a signal for
+#analysis or filter design
+
+#   FIR (Finite Impulse Response)
+#uses: only current and past input values No feedback from output. 
+#techique like window method, frequency sampling, or least-squares optimization
+#Because the effect of an impulse (a single spike input) dies out after a finite number of steps. (zeroes at the end)
+#Pros: Always stable, Easy to design, Can get perfect linear phase (important in audio/image processing)
+#Cons: Needs more computation (more coefficients for sharp filters)
+
+#   IIR (Infinite Impulse Response).
+#uses: both past inputs AND past outputs (feedback)
+#real coefficients Real-valued poles and zeros If the poles and zeros are real numbers, the coefficients will be real.
+#Complex Conjugate Pairs If a pole or zero is complex, its conjugate must also be present.
+#output depends: current input, past inputs, past outputs (feedback loop)
+#Why “infinite” Because feedback makes the effect of one impulse last forever (theoretically).
+#Pros: Very efficient (needs fewer coefficients), Achieves sharp filtering with less computation
+#Cons: Can become unstable if not designed properly, Phase distortion (signal shape can get warped)
+
+#   impulse signal
+#the output of a system when you give it an impulse input
+#FIR response non-zero only for a finite number of samples After that zero everywhere else
+#FIR response even after input becomes zero output keeps depending on past outputs
+
+#   Causal filters
+#A causal filter is a filter that uses only the current and past input values to produce an output.
+#In real-time systems, future data is not available yet, so systems use causal filters.
+
+#   Bounded Input-Bounded Output(BIBO) / ograniczony (zakres) input output
+#Input stays within a fixed limit → Output also stays within a fixed limit.
+#The output does not grow to infinity when the input is finite.
+#when infinite  stability depends on the placement of the poles if lies outside filet is unstable
+
+#   Adaptive filtering
+# adjust their parameters automatically to changes in the input signal. This makes them suitable
+#for applications where the signal or noise characteristics are not constant over time.
+#Noise reduction → removes unwanted noise (backgound noise, electrical interference, etc.).
+#Echo cancellation → removes echoes caused by signal reflections or acoustic feedback 
+#(during phone calls).
+#Speech enhancement → improves speech quality by reducing background noise.
+
+#   Direct Form II
+#Feedforward (Non-recursive) - Uses the current and past inputs.
+#Feedback (Recursive) - Uses the past outputs.
+#Direct Form I uses 4 delay elements (memory units). Direct Form II uses only 2 delay elements by sharing them between
+#the feedforward and feedback parts. So Direct Form II: Needs less memory. Is more efficient.
+
+#   Zero-Phase Filters
+#A zero-phase filter is a filter that does not shift the signal in time.
+#Phase is about time shifting of a signal. Normal filters often delay or shift the signal.
+#A zero-phase filter removes this delay. No time shift, Output is aligned with input
+#achieved Filtering the signal forward Then filtering it backward
+
+#   Causal Linear-Phase Filters 
+#A linear-phase filter changes the signal without distorting its shape, because it delays all frequency 
+#components equally.
+#linear phase All frequencies are delayed by the same amount of time So the waveform shape is preserved
+
+    #wyklad 3        Sampling and reconstruction of signals: the Nyquist-Shannon theory and its practical implications.
+                    Encoding and compression of digital signals: fundamentals and methods. Analysis of random signals:
+                    probability density functions and statistical characteristics. Modeling and forecasting of random
+                    signals autoregressive and moving average models.
+
+#Discrete - Something that is separate, not continuous.
+
+#   Sampling
+#Taking measurements of a continuous signal at regular time intervals to turn it into a discrete signal.
+
+#   Reconstruction
+#Reconstruction is the process of recovering a continuous-time signal from its discrete samples
+#The reconstruction is achieved using low-pass filter
+
+#   Compression
+#Lossless Compression: Achieves exact reconstruction of the original signal.
+#Lossy Compression: Sacrifices some information for higher compression ratios.
+
+#   Methods for Encoding 
+#Entropy Uses probabilistic models to assign shorter codes to more frequent values.
+#Predictive Predicts the current sample based on past samples. Stores or transmits only the difference
+#Transform Converts a signal into a domain where it is easier to compress ex: Discrete Cosine Transform (DCT) in JPEG.
+
+#variance - how stable or consistent the PSD estimate is when you repeat the experiment with different signals.
+#High variance → PSD looks different each time (unstable) Low variance → PSD looks similar each time (stable)
+
+#    Random Signals
+#random signal is a signal values cannot be precisely predicted and are described probabilistically. 
+#Probability Density Functions (PDFs) describes how probability is distributed for a continuous random variable
+#properties of a random signal are characterized by  mean, variance, and higher-order
+#Skewness (Third Central Moment): Skewness indicates asymmetry in the distribution.
+#Kurtosis (Fourth Central Moment) Kurtosis describes the ”tailedness” of the distribution.
+
+#   Autocorrelation
+#Measures the similarity between a signal and a time-shifted version of itself (signal and delayed version)
+
+#Power Spectral Density (PSD): Describes the power distribution of a signal over frequency Fourier transform of the
+#autocorrelation function
+
+#   models for random signals 
+#Autoregressive (AR) models.
+#Moving Average (MA) models
+#often combined into Autoregressive Moving Average (ARMA) or Autoregressive Integrated Moving Average (ARIMA)
+#(AR) The signal depends on its past values Current value is built from previous samples Plus some random noise
+#for signals with long-term dependencies.
+#(MA) The signal depends on past noise (errors) Current value is a mix of: current noise previous noise effects
+# for signals with short-term dependencies or noise-like 
+#(ARMA) More accurate modeling of real-world signals Today depends on both history and past disturbances
+#(ARIMA) ARMA + differencing (integration) "I" means first remove trends by differencing: signals that change over time
+
+# The cosine signal is deterministic signal. Noise and speech are random signals limited predicted from previous samples.
+
+#   usage of radom signals
+#Measurement of physical quantities - noise models e.g. the sensor noise. distortions, e.g. the transmission 
+#properties of an amplifier,
+#Communication channel - message is sent over a channel that distorts the signal by e.g. multipath propagation.
+#Additive noise is present at the receiver due to background and amplifier noise.
+
+#Univariate - one random variable 
+#Ensemble - The collection of all possible signals is called an ensemble.
+
+#   Cumulative Distribution Function (CDF) and Probability Density Functions (PDFs) (for random signals)
+#Univariate - The probability that a random variable X is less than or equal to a value x.
+#Bivariate - two variables It tells us the probability that both conditions are true at the same time.
+#Probability - for one or multiple signals to take a specific range of values, in the limit only one value
+#Ensemble Averages - A random process can produce many possible signals (called sample functions or realizations).
+
+#   math functions
+#Linear mean - Arithmetic Mean add all numbers and divide through amoun of numbers
+#quadratic mean - The quadratic mean (RMS) is the square root of the average of the squared values and represents 
+#the effective strength of a signal.
+#Variance - How spread out the values are from the mean (average).
+#Cross-correlation - how similar two signals are when one is shifted in time. two signals and slide one over the other
+#check how well they match at each shift
+#Auto-correlation - how similar a signal is to a shifted version of itself. you compare the signal with itself but
+# delayed (shifted) in time
+#Stationary Random Processes - random signal whose statistical properties do not change over time.
+#Higher-Order Temporal Averages - averaging a signal over time (using one signal and looking at its values at
+#different times).
+#Ergodic Random Processes - You can learn everything about it by observing just one long signal over time.
+
+    #wyklad 4        Power Spectrum Estimation: Periodogram Methods and Parametric Methods.Multidimensional Signal
+                    Processing: Extending Concepts and Techniques from One-Dimensional Signals. Applications of Digital
+                    Signal Processing in Practical Computing: Image, Audio, Biomedical Signals Processing, and More
+
+#    Signal Power
+# average power / approximate average power / limit of the mean squared value of the signal over all samples
+
+#   Power Spectral Density (PSD)
+#power of a signal is distributed across different frequencies.
+#Which frequencies contain the most power Which frequencies contain little power
+#It helps to: Analyze noise, Identify dominant frequencies, Design filters, Study random signals
+
+#   Power Spectrum Estimation
+#Estimating the Power Spectral Density (PSD) of a signal from measured data. Find which frequencies are present
+#Determine how much power each frequency contains
+#Non-parametric - not assume a model (AR, MA, or ARMA) for the signal. we calculate the spectrum directly from the data.
+#Periodogram - Take the signal samples. Compute the Fourier Transform (usually FFT). Square the magnitude.
+
+#   Bartlett Method 
+#improved version of the periodogram used to estimate the Power Spectral Density (PSD).
+#A single periodogram can be: Noisy and unstable
+#Instead of using the entire signal at once: Split the signal into several equal segments. Compute a periodogram for 
+#each segment. Average all the periodograms.
+
+#   Welch Method
+#improvement over the Bartlett Method for estimating the Power Spectral Density (PSD).
+#Split the signal into segments Allow segments to overlap (often 50%) Apply a window (Hamming, Hann, etc.) to each 
+#segment Compute a periodogram for each segment Average all periodograms
+
+#   Yule-Walker Method
+#parametric method for estimating the Power Spectral Density (PSD).
+#Instead of calculating the spectrum directly from the signal We assume the signal can be modeled by an AR model.
+#Then we estimate the AR coefficients and use them to obtain the PSD.
+
+#   Burg’s Method
+#parametric to estimate the Power Spectral Density (PSD) by fitting an AR model to a signal.
+#Instead directly computing the spectrum, build AR model that best represents the signal, then use it to find the PSD.
+#estimates AR coefficients by Minimizing both forward and backward prediction errors Ensuring the AR model is stable
+
+#   Resolution for methods (separate two frequencies that are very close to each other.)
+#Classical Periodogram Good resolution if the signal is long If few samples → poor resolution
+#Bartlett Method Each segment is shorter → worse resolution But smoother (less noise in estimate)
+#Welch Method Better than Bartlett Still lower than full periodogram More stable and smoother result
+#Parametric Methods (AR) Very high resolution Can detect very close frequencies even with few samples Depends strongly
+#on correct model order
+
+#   Variance for methods (stable or consistent the PSD estimate is when you repeat the experiment with different signals.
+#High variance  PSD looks different each time (unstable) Low variance → PSD looks similar each time (stable))
+#Classical Periodogram - Uses one signal only No averaging High variance PSD looks noisy and unstable
+#Bartlett Method - Split signal into parts Average results Lower variance than periodogram Smoother PSD
+#Welch Method - Like Bartlett overlapping segments windowing Even lower variance Very smooth and stable PSD
+#Parametric Methods (AR) - Assume a model for the signal Very low variance if model is correct
+#Very stable and sharp spectrum But: If model is wrong → variance increases a lot (bad estimate)
+
+#When to Use Non-Parametric Methods: Large datasets where computational efficiency is important. No prior knowledge
+#of the signal model Applications where smoothing (e.g., Welch method) is acceptable.
+
+#When to Use Parametric Methods: Short datasets where higher resolution is required. The underlying signal follows
+# a predictable model (e.g., AR or ARMA process). Applications requiring sharp spectral peaks (e.g., speech or 
+#vibration analysis).
+
+#Challenges in Non-Parametric - Variance of the Estimate: Single-periodogram estimates have high variance.
+#Leakage: Signal discontinuities introduce spectral leakage. Resolution: Frequency resolution depends on the total 
+#observation time
+
+#Challenges in Parametric - Order Selection: Overestimating order leads to overfitting. Model Mismatch: Assumes a
+#specific process (e.g., AR or ARMA) for the signal Sensitivity to Noise: can distort the estimated autocorrelation function.
+
+#   multidimensional signal
+#is a function defined over multiple independent variables.
+#Multidimensional Sampling - Sampling a signal that depends on more than one variable (dimension).
+#Multidimensional Reconstruction - Rebuilding a continuous signal from its discrete samples in multiple dimensions.
+
+#   image compression
+#Steps in JPEG Compression: Divide image into 8 × 8 blocks. Apply DCT to each block. Quantize DCT coefficients.
+#Encode the quantized data using entropy coding
+
+#   Biomedical Signal Processing
+#ECG Analysis: Detecting arrhythmias and heart rate variability. EEG Analysis: Diagnosing epilepsy or sleep disorders.
+#Noise Removal: Removing motion artifacts or power line interference. Feature Extraction: Extracting key biomarkers for
+# machine learning models.
+
+#   Other DSP Applications
+#Radar and Sonar Signal Processing: Target detection and velocity estimation. Control Systems: Feedback systems for 
+#robotics or industrial automation Communication Systems: Modulation, demodulation, and channel equalization.
+#Finance: Time series analysis for stock price predictions.
+
+    #wyklad 5        Multidimensional Signal Processing: Images and Video
+
+#Wavelet method breaking a signal or image into different scales (resolutions) It analyzes: coarse (low-resolution)
+#information fine (high-resolution) details is used in JPEG
+
+#2D convolution theorem says: If you convolve two signals/images in the spatial domain, it becomes multiplication in
+#the frequency domain.
+
+#multidimensional signal is a function whose domain includes two or more independent variables.
+#1D - (e.g., audio, EEG). 2D - images (grayscale or color frames) 3D - video (time series of images) or medical volumetric
+#scans (e.g., CT, MRI). 4D and higher - Hyperspectral images, spatiotemporal datasets.
+
+#Multidimensional signals are sampled independently along each dimension.
+
+#   Sampling
+#Uniform sampling - Samples are taken at equal, regular intervals Non-uniform sampling - Samples are taken at unequal
+# intervals #Subsampling - Taking fewer samples than original Oversampling - Taking more samples than necessary
+
+#   Reconstruction from Samples
+#Bilinear interpolation: Fast, uses linear weighting. Bicubic interpolation: Better edge preservation. 
+#Gaussian kernel: Smooth approximation, localized support.
+
+#   Discrete Cosine Transform (DCT)
+#Convert a signal (or image) from the time/spatial domain into the frequency domain using only cosine waves.
+#Instead of describing a signal directly (like pixel values or audio samples), DCT describes it as: a sum of different
+# cosine waves with different strengths.
+#Most energy is concentrated in a few low-frequency components High frequencies (fine details/noise) are often small
+# Enables compression
+
+#   2D Filtering
+#Low-pass filter: smooths the image, reduces noise, blurs edges. High-pass filter: emphasizes edges and fine details.
+#Band-pass filter: isolates features in a specific frequency range. Median filter: non-linear, good for removing 
+#salt-and-pepper noise.
+
+#   Common Image Operations
+#Noise Reduction , Sharpening, Morphological Operations: Dilation: expands white regions (foreground).
+#Erosion: shrinks white regions. Opening: erosion followed by dilation — removes small objects.
+#Closing: dilation followed by erosion — fills small holes.
+#Color Transformations: RGB to grayscale
+
+#   Video Processing Concepts
+#3D Filtering: Used for motion blur reduction and denoising Motion Estimation: Detects movement between consecutive frames.
+#Background Subtraction: Identifies moving objects by comparing each frame to a background model.
+#Video Compression: Exploits temporal redundancy: interframe prediction
+#Frame Interpolation: Generate intermediate frames to increase frame rate (slow-motion). 
+#Video Stabilization: Reduces camera shake by estimating and correcting motion.
+#Scene Change Detection: Automatically segments video into shots or scenes.
+#Video Object Tracking: Continuously locates a target in successive frames.
+#Deep Learning in Video: CNNs and RNNs for object detection and activity recognition.
+
+#   Other Multidimensional Signal Processing 
+#Augmented and Virtual Reality: Real-time object recognition and tracking.
+#3D scene reconstruction from multi-camera input.
+#Industrial Inspection: Defect detection in manufacturing (e.g., cracks, misalignment).
+#Automated quality control using image-based analysis.
+#Cultural Heritage: Restoration and digitization of artworks and manuscripts.Spectral imaging for pigment analysis.
+#Autonomous Vehicles: Object detection and lane tracking from onboard cameras. Depth estimation using stereo vision.
+
+#   Continuous-Time State-Space Model
+#is a way to describe a dynamic system using differential equations.
+#Instead of describing a system with one big equation, we describe it using: State variables (internal memory of the system)
+#Input, Output
+
+#Kalman–Bucy Filter is the continuous-time version of the Kalman filter. It is used to: estimate the true state of
+# a system when measurements are noisy and change continuously over time.
+
+#Steady-State Filter after some time, the filter’s behavior becomes constant and no longer changes with time.
+#At the beginning: the filter is still “learning” its parameters (like gain) may change
+#After some time: everything stabilizes the filter works with fixed values
+
+#Covariance - how uncertain or “spread out” an estimate is.
+#Riccati Equation - how the covariance matrix evolves over time.
+
+    #wyklad 6        Digital Signal Processing for Signal Estimation and Biomedical Modeling
+
+potem
